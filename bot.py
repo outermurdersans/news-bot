@@ -1,8 +1,9 @@
-# main_bot.py (to be hosted on GitHub)
+# main_bot.py (hosted on GitHub)
 import discord
 import aiohttp
 import asyncio
 import logging
+import os
 from datetime import datetime
 
 logging.basicConfig(
@@ -12,7 +13,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Define client here
 try:
     intents = discord.Intents.default()
     intents.message_content = True
@@ -69,7 +69,10 @@ async def main():
         while True:
             try:
                 logger.info("Starting client...")
-                await client.start("MTI0NTM4ODUzNTEwNDY3MTc0NQ.GRh2GX.RO81gjb66jFnpxIjid6jHPWYwaNbg6PcaqvOcY")
+                token = os.getenv("DISCORD_TOKEN")
+                if not token:
+                    raise ValueError("DISCORD_TOKEN environment variable not set")
+                await client.start(token)
             except Exception as e:
                 logger.error(f"Failed to start client: {e}. Retrying in 60 seconds...")
                 await asyncio.sleep(60)
