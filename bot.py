@@ -64,7 +64,7 @@ async def main():
                     print(f"Error sending message via webhook for channel {message.channel.id}: {e}")
 
         print("Starting client...")
-        await client.start("MTI0NTM4ODUzNTEwNDY3MTc0NQ.GRh2GX.RO81gjb66jFnpxIjid6jHPWYwaNbg6PcaqvOcY")
+        await client.start("MTI0NTM4ODUzNTEwNDY3MTc0NQ.GocMC_.LP7PAi9KVnjkr1LHjSnJTUEy0q1LqheW7URZ8U")
 
     except Exception as e:
         print(f"Error during login or runtime: {e}")
