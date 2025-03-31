@@ -3,12 +3,11 @@ import aiohttp
 import asyncio
 import logging
 import os
-from datetime import datetime
 
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s',
-    handlers=[logging.StreamHandler()]
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[logging.StreamHandler()],
 )
 logger = logging.getLogger(__name__)
 
@@ -24,13 +23,6 @@ except AttributeError:
 CHANNEL_WEBHOOK_MAP = {
     427560506832715796: "https://discord.com/api/webhooks/1352983805417361408/cMk1Afw60NKB5CEbTISTZprqD1T_5O5kTVCCCnPddzXsYu40QPW2_XaBf7mijUGxDH8w",
     866704036237148180: "https://discord.com/api/webhooks/1352984410416353351/fqqpYbJyt44ttZXCYvt6psIuowwnawRPkZTP9Aot6aDysOUss8UPRy_VO3qHXxyiA1m9",
-    1285968642369917043: "https://discord.com/api/webhooks/1352984410416353351/fqqpYbJyt44ttZXCYvt6psIuowwnawRPkZTP9Aot6aDysOUss8UPRy_VO3qHXxyiA1m9",
-    888831833230434364: "https://discord.com/api/webhooks/1352984410416353351/fqqpYbJyt44ttZXCYvt6psIuowwnawRPkZTP9Aot6aDysOUss8UPRy_VO3qHXxyiA1m9",
-    1217319820681281638: "https://discord.com/api/webhooks/1352984410416353351/fqqpYbJyt44ttZXCYvt6psIuowwnawRPkZTP9Aot6aDysOUss8UPRy_VO3qHXxyiA1m9",
-    1223753648564080690: "https://discord.com/api/webhooks/1352984410416353351/fqqpYbJyt44ttZXCYvt6psIuowwnawRPkZTP9Aot6aDysOUss8UPRy_VO3qHXxyiA1m9",
-    1208900209849929829: "https://discord.com/api/webhooks/1356349983376408668/evldk95QUvhlZfrQ8m3KcK1eGULzbz-0HqjMSJ2ngmmYiUT7mtBt4YAqLGJzMKpPC6hE",
-    1208896293452386375: "https://discord.com/api/webhooks/1356349983376408668/evldk95QUvhlZfrQ8m3KcK1eGULzbz-0HqjMSJ2ngmmYiUT7mtBt4YAqLGJzMKpPC6hE",
-    1208896293296939066: "https://discord.com/api/webhooks/1356349983376408668/evldk95QUvhlZfrQ8m3KcK1eGULzbz-0HqjMSJ2ngmmYiUT7mtBt4YAqLGJzMKpPC6hE",
 }
 
 async def main():
@@ -38,13 +30,7 @@ async def main():
     try:
         @client.event
         async def on_ready():
-            logger.info(f"Connected to {client.user.name} (ID: {client.user.id})")
-            for channel_id in CHANNEL_WEBHOOK_MAP.keys():
-                channel = client.get_channel(channel_id)
-                if channel:
-                    logger.info(f"Found source channel: {channel} (ID: {channel_id})")
-                else:
-                    logger.warning(f"Could not find source channel with ID {channel_id}")
+            logger.info(f"Connected to {client.user} (ID: {client.user.id})")
 
         @client.event
         async def on_message(message):
@@ -54,21 +40,22 @@ async def main():
             if message.channel.id not in CHANNEL_WEBHOOK_MAP:
                 return  # Ignore messages from unmonitored channels
 
-            logger.info(f"Message received: {message.content} from {message.author} in channel {message.channel.id}")
+            logger.info(
+                f"Message received: {message.content} from {message.author} in channel {message.channel.id}"
+            )
 
             webhook_url = CHANNEL_WEBHOOK_MAP[message.channel.id]
-            logger.info(f"Message matches source channel {message.channel.id}! Sending via webhook {webhook_url}...")
             
             # Prepare content with original message and attachment URLs
             content = message.content
             if message.attachments:
                 attachment_urls = [attachment.url for attachment in message.attachments]
                 content += "\n" + "\n".join(attachment_urls) if content else "\n".join(attachment_urls)
-            
+
             payload = {
                 "content": content,
                 "username": str(message.author.name),
-                "avatar_url": message.author.avatar.url if message.author.avatar else None
+                "avatar_url": message.author.avatar.url if message.author.avatar else None,
             }
             try:
                 async with session.post(webhook_url, json=payload) as response:
