@@ -29,8 +29,8 @@ CHANNEL_WEBHOOK_MAP = {
     888831833230434364: "https://discord.com/api/webhooks/1352984410416353351/fqqpYbJyt44ttZXCYvt6psIuowwnawRPkZTP9Aot6aDysOUss8UPRy_VO3qHXxyiA1m9",
     1217319820681281638: "https://discord.com/api/webhooks/1352984410416353351/fqqpYbJyt44ttZXCYvt6psIuowwnawRPkZTP9Aot6aDysOUss8UPRy_VO3qHXxyiA1m9",
     1223753648564080690: "https://discord.com/api/webhooks/1352984410416353351/fqqpYbJyt44ttZXCYvt6psIuowwnawRPkZTP9Aot6aDysOUss8UPRy_VO3qHXxyiA1m9",
-    1208900209849929829: "https://discord.com/api/webhooks/1356349983376408668/evldk95QUvhlZfrQ8m3KcK1eGULzbz-0HqjMSJ2ngmmYiUT7mtBt4YAqLGJzMKpPC6hE".
-   # 1208896293452386375: "https://discord.com/api/webhooks/1356349983376408668/evldk95QUvhlZfrQ8m3KcK1eGULzbz-0HqjMSJ2ngmmYiUT7mtBt4YAqLGJzMKpPC6hE",
+    1208900209849929829: "https://discord.com/api/webhooks/1356349983376408668/evldk95QUvhlZfrQ8m3KcK1eGULzbz-0HqjMSJ2ngmmYiUT7mtBt4YAqLGJzMKpPC6hE",
+    1208896293452386375: "https://discord.com/api/webhooks/1356349983376408668/evldk95QUvhlZfrQ8m3KcK1eGULzbz-0HqjMSJ2ngmmYiUT7mtBt4YAqLGJzMKpPC6hE",
     1208896293296939066: "https://discord.com/api/webhooks/1356349983376408668/evldk95QUvhlZfrQ8m3KcK1eGULzbz-0HqjMSJ2ngmmYiUT7mtBt4YAqLGJzMKpPC6hE",
 }
 
