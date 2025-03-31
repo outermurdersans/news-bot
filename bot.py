@@ -28,7 +28,7 @@ CHANNEL_WEBHOOK_MAP = {
     1285968642369917043: "https://discord.com/api/webhooks/1352984410416353351/fqqpYbJyt44ttZXCYvt6psIuowwnawRPkZTP9Aot6aDysOUss8UPRy_VO3qHXxyiA1m9",
     888831833230434364: "https://discord.com/api/webhooks/1352984410416353351/fqqpYbJyt44ttZXCYvt6psIuowwnawRPkZTP9Aot6aDysOUss8UPRy_VO3qHXxyiA1m9",
     1217319820681281638: "https://discord.com/api/webhooks/1352984410416353351/fqqpYbJyt44ttZXCYvt6psIuowwnawRPkZTP9Aot6aDysOUss8UPRy_VO3qHXxyiA1m9",
-    1223753648564080690: "https://discord.com/api/webhooks/1352984410416353351/fqqpYbJyt44ttZXCYvt6psIuowwnawRPkZTP9Aot6aDysOUss8UPRy_VO3qHXxyiA1m9",
+    1152324274980405350: "https://discord.com/api/webhooks/1352984410416353351/fqqpYbJyt44ttZXCYvt6psIuowwnawRPkZTP9Aot6aDysOUss8UPRy_VO3qHXxyiA1m9",
 }
 
 async def main():
@@ -52,8 +52,15 @@ async def main():
             if message.channel.id in CHANNEL_WEBHOOK_MAP:
                 webhook_url = CHANNEL_WEBHOOK_MAP[message.channel.id]
                 logger.info(f"Message matches source channel {message.channel.id}! Sending via webhook {webhook_url}...")
+                
+                # Prepare content with original message and attachment URLs
+                content = message.content
+                if message.attachments:
+                    attachment_urls = [attachment.url for attachment in message.attachments]
+                    content += "\n" + "\n".join(attachment_urls) if content else "\n".join(attachment_urls)
+                
                 payload = {
-                    "content": message.content,
+                    "content": content,
                     "username": str(message.author.name),
                     "avatar_url": message.author.avatar.url if message.author.avatar else None
                 }
