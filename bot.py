@@ -1,3 +1,4 @@
+# main_bot.py (hosted on GitHub)
 import discord
 import aiohttp
 import asyncio
@@ -12,10 +13,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-intents = discord.Intents.default()
-intents.message_content = True
-intents.messages = True
-client = discord.Client(self_bot=True, intents=intents)
+try:
+    intents = discord.Intents.default()
+    intents.message_content = True
+    intents.messages = True
+    client = discord.Client(self_bot=True, intents=intents)
+except AttributeError:
+    logger.warning("Intents not supported. Proceeding without intents...")
+    client = discord.Client(self_bot=True)
 
 CHANNEL_WEBHOOK_MAP = {
     427560506832715796: "https://discord.com/api/webhooks/1352983805417361408/cMk1Afw60NKB5CEbTISTZprqD1T_5O5kTVCCCnPddzXsYu40QPW2_XaBf7mijUGxDH8w",
@@ -35,33 +40,44 @@ async def main():
         @client.event
         async def on_ready():
             logger.info(f"Connected to {client.user.name} (ID: {client.user.id})")
+            for channel_id in CHANNEL_WEBHOOK_MAP.keys():
+                channel = client.get_channel(channel_id)
+                if channel:
+                    logger.info(f"Found source channel: {channel} (ID: {channel_id})")
+                else:
+                    logger.warning(f"Could not find source channel with ID {channel_id}")
 
         @client.event
         async def on_message(message):
-            if message.author.id == client.user.id or message.channel.id not in CHANNEL_WEBHOOK_MAP:
+            if message.author.id == client.user.id:
                 return
+if message.channel.id not in CHANNEL_WEBHOOK_MAP:
+    return  # Ignore messages from unmonitored channels
 
-            webhook_url = CHANNEL_WEBHOOK_MAP[message.channel.id]
-            logger.info(f"Relaying message from {message.author} in {message.channel.id}")
+logger.info(f"Message received: {message.content} from {message.author} in channel {message.channel.id}")
 
-            content = message.content
-            if message.attachments:
-                attachment_urls = [attachment.url for attachment in message.attachments]
-                content += "\n" + "\n".join(attachment_urls) if content else "\n".join(attachment_urls)
-
-            payload = {
-                "content": content,
-                "username": str(message.author.name),
-                "avatar_url": message.author.avatar.url if message.author.avatar else None
-            }
-            try:
-                async with session.post(webhook_url, json=payload) as response:
-                    if response.status == 204:
-                        logger.info(f"Message sent successfully via webhook for channel {message.channel.id}!")
-                    else:
-                        logger.error(f"Webhook error: Status {response.status}, Response: {await response.text()}")
-            except Exception as e:
-                logger.error(f"Error sending message via webhook for channel {message.channel.id}: {e}")
+                webhook_url = CHANNEL_WEBHOOK_MAP[message.channel.id]
+                logger.info(f"Message matches source channel {message.channel.id}! Sending via webhook {webhook_url}...")
+                
+                # Prepare content with original message and attachment URLs
+                content = message.content
+                if message.attachments:
+                    attachment_urls = [attachment.url for attachment in message.attachments]
+                    content += "\n" + "\n".join(attachment_urls) if content else "\n".join(attachment_urls)
+                
+                payload = {
+                    "content": content,
+                    "username": str(message.author.name),
+                    "avatar_url": message.author.avatar.url if message.author.avatar else None
+                }
+                try:
+                    async with session.post(webhook_url, json=payload) as response:
+                        if response.status == 204:
+                            logger.info(f"Message sent successfully via webhook for channel {message.channel.id}!")
+                        else:
+                            logger.error(f"Webhook error: Status {response.status}, Response: {await response.text()}")
+                except Exception as e:
+                    logger.error(f"Error sending message via webhook for channel {message.channel.id}: {e}")
 
         while True:
             try:
